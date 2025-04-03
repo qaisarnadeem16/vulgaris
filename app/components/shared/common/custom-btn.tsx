@@ -31,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <div className="my-2">
       <button
-        className={`py-2 5xl:py-3 cursor-pointer md:px-7 5xl:h-[64px] border border-white lg:h-[50px] h-[40px] px-5 xl:text-lg lg:text-base text-base   min-w-fit justify-center font-[300] text-white  flex items-center hover:scale-105 duration-300 transition-all ${disabled ? "bg-opacity-50 cursor-not-allowed" : ""
+        className={`py-2 5xl:py-3 bg-buttonBg rounded-lg cursor-pointer md:px-7 5xl:h-[64px] lg:h-[50px] h-[40px] px-5 xl:text-lg lg:text-base text-base   min-w-fit justify-center font-[300] text-white  flex items-center hover:scale-105 duration-300 transition-all ${disabled ? "bg-opacity-50 cursor-not-allowed" : ""
           } ${style}`}
         onClick={!disabled && !loading ? onClick : undefined}
         disabled={disabled}

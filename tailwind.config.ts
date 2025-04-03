@@ -15,10 +15,14 @@ const config: Config = {
         primary: "#EDC265",
         white: "#FFFFFF",
         borderColor: "#FFFFFF4D",
+        semiBlack:'#161C2D',
+        buttonBg:'#52469E',
+        blue:'#3E8FEE'
       },
       fontFamily: {
         poppins: ["var(--font-poppins)", "sans-serif"],
         alice: ["var(--font-alice)", "serif"],
+        poetsen: ["var(--font-poetsen)", "cursive"],
       },
     },
   },

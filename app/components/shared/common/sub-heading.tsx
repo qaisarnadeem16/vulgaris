@@ -8,7 +8,7 @@ interface Props {
 const SubHeading: React.FC<Props> = ({ text, styles }) => {
   return (
     <h3
-      className={`text-secondary font-[300] text-center  5xl:text-lg xl:text-base text-sm lg:leading-[20px] 5xl:leading-[24px] ${styles}`}
+      className={`text-black font-[300] text-center  5xl:text-lg xl:text-lg text-sm lg:leading-[20px] 5xl:leading-[24px] ${styles}`}
     >
       {text}
     </h3>

@@ -45,7 +45,7 @@ const CustomInput = (props: CustomInputProps) => {
     setShowPassword(!showPassword);
   };
 
-  const inputClass = `text-secondary text-sm bg-[#434242] border ${error ? "border-error" : "border-transparent"
+  const inputClass = `text-secondary text-sm rounded-lg border-2 ${error ? "border-error" : " border-[#D9E1E7]"
     }  py-3 focus:outline-none block w-full px-2.5 `;
 
   const containerClass = `relative bg-transparent ${error ? "pb-6" : ""}`;
@@ -55,7 +55,7 @@ const CustomInput = (props: CustomInputProps) => {
       {label && (
         <label
           htmlFor={name}
-          className="block mb-2 text-sm sm:text-base font-normal text-[#F9F6EE]"
+          className="block mb-2 text-sm sm:text-base font-normal text-semiBlack"
         >
           {label}
         </label>
@@ -73,7 +73,7 @@ const CustomInput = (props: CustomInputProps) => {
             name={name}
             id={name}
             value={value}
-            className="w-full bg-transparent focus:outline-none focus:border-none"
+            className="w-full  py-1 px-3  bg-transparent focus:outline-none focus:border-none"
             onChange={onChange}
             onBlur={onBlur}
           />
