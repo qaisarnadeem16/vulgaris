@@ -28,9 +28,9 @@ const Navbar = () => {
                     {language}
                 </button>
 
-                <button className="bg-buttonBg hover:scale-105 duration-300 transition-all text-white px-6 py-2 rounded-lg">
+                <Link href={'/login'} className="bg-buttonBg hover:scale-105 duration-300 transition-all text-white px-6 py-2 rounded-lg">
                     Login
-                </button>
+                </Link>
             </div>
 
             {/* Mobile Menu Button */}
