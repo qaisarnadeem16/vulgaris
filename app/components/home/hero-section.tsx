@@ -14,7 +14,6 @@ type Props = {}
 const HeroSection = (props: Props) => {
     return (
         <div className="">
-            <Navbar />
             <div className=' min-w-full flex  w-full items-center  !bg-cover bg-no-repeat bg-center' style={{ backgroundImage: `url(${(bg as StaticImageData).src})` }}>
 
                 <Section>

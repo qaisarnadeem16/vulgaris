@@ -9,7 +9,7 @@ const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <nav className="flex items-center justify-between px-8 py-6 absolute w-full left-1/2 -translate-x-1/2 lg:w-9/12">
+        <nav className="flex items-center justify-between z-10 px-8 py-6 absolute w-full left-1/2 -translate-x-1/2 lg:w-9/12">
             {/* Logo */}
             <Link href={'/'} className="text-2xl font-bold text-black">
                 <span className="font-poetsen text-[32px]">Vulgaris</span>
@@ -19,7 +19,7 @@ const Navbar = () => {
             <div className="hidden md:flex text-base space-x-6 font-poppins text-black font-semibold">
                 <Link href={'/'} className="hover:text-buttonBg cursor-pointer">Home</Link>
                 <Link href={'/'} className="hover:text-buttonBg cursor-pointer">How It Works</Link>
-                <Link href={'/'} className="hover:text-buttonBg cursor-pointer">Pricing</Link>
+                <Link href={'/payment'} className="hover:text-buttonBg cursor-pointer">Pricing</Link>
             </div>
 
             {/* Language Selector & Login */}

@@ -8,7 +8,7 @@ import Section from '../shared/section';
 import Button from '../shared/common/custom-btn';
 import Heading from '../shared/common/heading';
 import SubHeading from '../shared/common/sub-heading';
-import Navbar from '../shared/navbar';
+
 
 const Upload = () => {
     return (
@@ -20,7 +20,6 @@ const Upload = () => {
             <div className="absolute left-0 top-7">
                 <Image src={gradientellipse} alt="gradientcircle" height={200} width={200} />
             </div>
-            <Navbar />
             <div className=" flex justify-center pt-20 items-center flex-grow">
                 <Section>
                     <div className="">

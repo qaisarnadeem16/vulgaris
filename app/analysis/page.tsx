@@ -1,14 +1,14 @@
 import React from 'react'
-import Upload from '../components/upload'
+import Analysis from '../components/analysis/Analysis'
 import Navbar from '../components/shared/navbar'
 
-const UploadPage = () => {
+const AnalysisPage = () => {
     return (
         <div>
             <Navbar />
-            <Upload />
+            <Analysis />
         </div>
     )
 }
 
-export default UploadPage
+export default AnalysisPage
