@@ -16,6 +16,7 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
+
 // Poetsen One font setup
 const poetsenOne = Poetsen_One({
   weight: "400",
