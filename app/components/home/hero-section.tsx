@@ -23,7 +23,7 @@ const HeroSection = (props: Props) => {
                         <SubHeading styles='max-w-xl py-9 mx-auto font-normal font-poppins text-[19px]' text='Our AI cross-references thousands of medical studies to give you a personalized health report—so you can make informed decisions faster.' />
 
                         <div className="!flex !justify-center">
-                            <Button label='Upload Pdg'/>
+                            <Button label='Upload PDF'/>
                         </div>
                     </div>
                 </Section>

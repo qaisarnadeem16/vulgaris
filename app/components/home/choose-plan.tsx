@@ -2,7 +2,7 @@ import React from 'react'
 import Section from '../shared/section'
 import Heading from '../shared/common/heading'
 import SubHeading from '../shared/common/sub-heading'
-import PricingCard from '../shared/pricingcard'
+import PricingCard from '../payment/pricing-card'
 import Image, { StaticImageData } from 'next/image'
 import bg from '/public/assets/plan-bg.svg'
 

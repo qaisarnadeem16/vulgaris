@@ -3,7 +3,7 @@ import React from 'react'
 import payment from '/public/assets/payment-bg.svg'
 import Heading from '../shared/common/heading'
 import SubHeading from '../shared/common/sub-heading'
-import PricingCard from '../shared/pricingcard'
+import PricingCard from './pricing-card'
 
 const oneTimeFeatures = [
     "One comprehensive AI analysis",
