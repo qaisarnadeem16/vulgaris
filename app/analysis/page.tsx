@@ -1,6 +1,6 @@
 import React from 'react'
-import Analysis from '../components/analysis/Analysis'
 import Navbar from '../components/shared/navbar'
+import Analysis from '../components/analysis'
 
 const AnalysisPage = () => {
     return (
