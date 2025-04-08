@@ -5,6 +5,7 @@ import featuredicon from "/public/assets/featuredicon.svg";
 import best from "/public/assets/best.svg";
 import whitecheckcircle from "/public/assets/whitecheckcircle.svg";
 import blackcheck from "/public/assets/blackcheck.svg";
+import Link from "next/link";
 
 interface PricingCardProps {
     title: string;
@@ -28,8 +29,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
     return (
         <div
             className={`relative w-full max-w-sm p-6 rounded-xl shadow-lg ${isSubscription
-                    ? "bg-gradient-to-br from-purple-900 to-indigo-900 text-white"
-                    : "bg-white text-gray-800"
+                ? "bg-gradient-to-br from-purple-900 to-indigo-900 text-white"
+                : "bg-white text-gray-800"
                 }`}
         >
             {/* Badge for Best Value */}
@@ -78,14 +79,16 @@ const PricingCard: React.FC<PricingCardProps> = ({
             </ul>
 
             {/* Button */}
-            <button
-                className={`w-full py-3 rounded-full font-medium transition-colors ${isSubscription
+            <Link href={'/payment'}>
+                <button
+                    className={`w-full py-3 rounded-full font-medium transition-colors ${isSubscription
                         ? "bg-white text-indigo-500 hover:bg-gray-100"
                         : " text-buttonBg border hover:bg-gray-300"
-                    }`}
-            >
-                {buttonText}
-            </button>
+                        }`}
+                >
+                    {buttonText}
+                </button>
+            </Link>
         </div>
     );
 };

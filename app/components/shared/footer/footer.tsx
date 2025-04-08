@@ -22,7 +22,7 @@ const Footer = () => {
                 <div className="space-y-5 py-5">
                     {/* Left Section: Logo and Disclaimer */}
                     <div className="md:mb-0  flex  flex-row justify-between md:items-center text-gray-800">
-                        <h3 className="text-2xl font-semibold">Vulgariis</h3>
+                        <h3 className="text-2xl font-semibold">MediZen</h3>
                         <div className="flex items-center gap-5">
                             <Link href="#" aria-label="twitter">
                                 <TwitterIcon />

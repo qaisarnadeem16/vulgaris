@@ -1,3 +1,4 @@
+import { error } from "console";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -11,6 +12,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        error:'#ef4444',
         secondary: "#C5C5C5",
         primary: "#EDC265",
         white: "#FFFFFF",

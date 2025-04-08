@@ -10,7 +10,7 @@ const HowItWorks = () => {
     return (
         <div className="py-12">
             <Section>
-                <div className="text-center">
+                <div className="text-center" id="how-it-works">
                     <Heading className="font-poppins font-bold">How does it work?</Heading>
 
                     <SubHeading
