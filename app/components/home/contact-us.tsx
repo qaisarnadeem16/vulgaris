@@ -26,6 +26,7 @@ const ContactUs: React.FC<Props> = () => {
         console.log('Form data:', formData);
     };
 
+    
     return (
         <div className='bg-[#2E2E2E]'>
             <Section>
