@@ -44,7 +44,7 @@ const Footer = () => {
                         <p className="text-sm mt-2 max-w-sm">
                             AI insights are informational only— <br />not a substitute for professional <br /> medical diagnosis
                         </p>
-                        <nav className="grid md:flex justify-center grid-cols-2 gap-4 py-2">
+                        <nav className="grid md:flex justify-center text-semiBlack grid-cols-2 gap-4 py-2">
                             <Link href="#" className="hover:text-gray-600">Home</Link>
                             <Link href="#" className="hover:text-gray-600">Pricing</Link>
                             <Link href="#" className="hover:text-gray-600">How It Works</Link>
@@ -59,7 +59,7 @@ const Footer = () => {
 
                 {/* Bottom Section: Copyright and Payment Logos */}
                 <div className="mt-6 flex flex-col md:flex-row justify-between items-center border-t border-gray-200 pt-4">
-                    <p className="text-sm">© 2025, All right reserved | Vulgariis</p>
+                    <p className="text-sm text-semiBlack">© 2025, All right reserved | MediZen</p>
                     <div className="grid grid-cols-5 md:grid-cols-12 gap-3  mt-2 md:mt-0">
                         <Image src={american} alt="american" width={40} height={20} className="cursor-pointer" />
                         <Image src={paypal} alt="paypal" width={40} height={20} className="cursor-pointer" />

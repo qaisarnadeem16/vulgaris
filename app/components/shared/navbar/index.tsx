@@ -73,7 +73,7 @@ const Navbar = () => {
                         <X size={32} />
                     </button>
 
-                    <div className="flex flex-col space-y-6 text-xl font-semibold">
+                    <div className="flex flex-col text-black items-start space-y-6 text-xl font-semibold">
                         <Link href="/" onClick={() => setIsMenuOpen(false)} className={`${isActive('/') ? 'text-buttonBg' : ''}`}>
                             Home
                         </Link>
