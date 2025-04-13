@@ -24,11 +24,11 @@ const HeroSection = (props: Props) => {
     const { user, isLoading } = useAuth();
 
     const handleUploadClick = () => {
-        if (!user) {
-            router.push('/login');
-        } else {
+        // if (!user) {
+        //     router.push('/login');
+        // } else {
             router.push('/upload');
-        }
+        // }
     };
 
     if (isLoading) {
