@@ -24,7 +24,8 @@ export default function GoogleLogin() {
     );
     const scope = encodeURIComponent("email profile");
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+
     window.location.href = authUrl;
   };
 
