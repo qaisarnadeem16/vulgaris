@@ -34,16 +34,23 @@ const Login = () => {
       console.log("Processing Google login");
       const handleGoogleLogin = async () => {
         try {
-          const success = await login(email, token);
-          if (success) {
+          const verifyResponse = await fetch("http://localhost:8000/api/auth/check-token", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (verifyResponse.ok) {
+            const success = await login(email, token);
+                 if (success) {
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
             router.push("/upload");
+          }
           }
         } catch (error) {
           console.error("Google login failed:", error);
         }
       };
+
       handleGoogleLogin();
     }
   }, [searchParams, router, login]);
@@ -62,77 +69,45 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!validate()) return;
-
-  //   setIsSubmitting(true);
-  //   try {
-  //     const response = await fetch("http://localhost:8000/api/auth/login", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, password }),
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       // Store token in localStorage
-  //       localStorage.setItem("token", data.token);
-  //       localStorage.setItem("userEmail", data.user.email);
-  //       console.log("Login success:", data);
-  //       login(data.user.email, data.token);
-  //       router.push("/");
-  //     } else {
-  //       const error = await response.json();
-  //       alert(error.message || "Login failed");
-  //     }
-  //   } catch (err) {
-  //     alert("An error occurred. Please try again.");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Attempting login with:", { email, password });
-    console.log("1. Form submitted");
-    // if (!validate()) return;
-    if (!validate()) {
-      console.log("2. Validation failed", errors);
-      return;
-    }
-
-    console.log("3. Attempting login with:", { email, password });
+    if (!validate()) return;
+  
     setIsSubmitting(true);
     try {
-      console.log("4. Making fetch request");
       const response = await fetch("http://localhost:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify({
           email: email.trim(),
           password,
         }),
       });
-      console.log("5. Got response:", response.status);
-
+  
       const data = await response.json();
-
+      console.log("Full response:", { status: response.status, data }); // Add this line
+  
       if (!response.ok) {
         throw new Error(
-          data.message || `Login failed (Status: ${response.status})`
+          data.message || 
+          `Login failed (Status: ${response.status})` + 
+          (data.error ? ` - ${data.error}` : '')
         );
       }
+  
       localStorage.setItem("token", data.token);
       localStorage.setItem("userEmail", data.user.email);
       login(data.user.email, data.token);
       router.push("/");
     } catch (err: any) {
-      console.error("Login error:", err);
+      console.error("Detailed login error:", {
+        message: err.message,
+        stack: err.stack,
+        response: err.response // If available
+      });
       alert(err.message || "An error occurred during login. Please try again.");
     } finally {
       setIsSubmitting(false);
