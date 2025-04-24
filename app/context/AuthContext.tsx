@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (storedToken && storedEmail) {
         try {
           const response = await fetch(
-            `http://localhost:8000/api/auth/user/${storedEmail}`,
+            `https://medizen-backend-three.vercel.app/api/auth/user/${storedEmail}`,
             {
               headers: {
                 Authorization: `Bearer ${storedToken}`,
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
     try {
       const response = await fetch(
-        `http://localhost:8000/api/auth/user/${storedEmail}`,
+        `https://medizen-backend-three.vercel.app/api/auth/user/${storedEmail}`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(token);
 
       const response = await fetch(
-        `http://localhost:8000/api/auth/user/${email}`,
+        `https://medizen-backend-three.vercel.app/api/auth/user/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/auth/check-token`,
+        `https://medizen-backend-three.vercel.app/api/auth/check-token`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,

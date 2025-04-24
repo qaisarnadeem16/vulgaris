@@ -27,7 +27,7 @@ const subscriptionFeatures = [
 
 const HeroSection = () => {
     const { user } = useAuth();
-   
+   console.log('🍕', user)
     const handlePayment = async (type:string)=>{
         if(user)
         {

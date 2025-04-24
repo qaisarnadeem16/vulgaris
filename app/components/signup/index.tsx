@@ -12,6 +12,7 @@ import CustomInput from "../shared/common/custom-input";
 import Button from "../shared/common/custom-btn";
 import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
+import { signupUser } from "@/actions/auth-actions/auth-actions";
 
 // Define the structure of form data
 interface FormData {
@@ -92,25 +93,35 @@ const Register: React.FC = () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    try {
-      const response = await fetch("http://localhost:8000/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    // try {
+    //   const response = await fetch("http://localhost:8000/api/auth/signup", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(formData),
+    //   });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Registration success:", data);
-        login(data.user.email, data.token);
-        router.push("/upload");
-      } else {
-        const error = await response.json();
-        alert(error.message || "Registration failed");
-      }
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
-    } finally {
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     console.log("Registration success:", data);
+    //     login(data.user.email, data.token);
+    //     router.push("/upload");
+    //   } else {
+    //     const error = await response.json();
+    //     alert(error.message || "Registration failed");
+    //   }
+    // } catch (err) {
+    //   alert("Something went wrong. Please try again.");
+    // } 
+    try {
+      const data = await signupUser(formData);
+      console.log("Registration success:", data);
+      login(data.user.email, data.token);
+      router.push("/upload");
+    } catch (err: any) {
+      alert(err.message);
+    }
+
+    finally {
       setIsSubmitting(false);
     }
   };

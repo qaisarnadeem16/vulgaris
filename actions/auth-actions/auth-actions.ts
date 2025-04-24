@@ -1,45 +1,68 @@
 "use server";
 
 import axiosInstance from "@/config/axios";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { isAxiosError } from "axios";
 
-interface LoginActionProps {
-  email: string;
-  password: string;
-}
-
-export const loginAction = async ({ email, password }: LoginActionProps) => {
+export async function loginAction(email: string, password: string) {
   if (!email || !password) {
-    throw new Error("Please fill all the fields");
+    return { error: "Please fill all fields" };
   }
 
   try {
-    const response = await axiosInstance.post(
-      "/api/auth/log-in",
-      { email, password },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await axiosInstance.post("/api/auth/login", {
+      email,
+      password,
+    });
 
-    if (response.data.success) {
-      return response.data;
-    }
-
-    return {
-      success: false,
-      error: response.data?.error || "Login failed",
-    };
-  } catch (error: unknown) {
-    if (isAxiosError(error)) {
+    if (response.data.token) {
       return {
-        success: false,
-        error: error.response?.data?.error || "Invalid credentials",
+        success: true,
+        token: response.data.token,
+        user: response.data.user,
       };
     }
 
-    return {
-      success: false,
-      error: "An unexpected error occurred. Please try again later.",
-    };
+    return { error: response.data?.message || "Login failed" };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return { error: error.response?.data?.message || "Invalid credentials" };
+    }
+    return { error: "An unexpected error occurred" };
+  }
+}
+
+export async function verifyGoogleToken(token: string) {
+  try {
+    const response = await axiosInstance.get("/api/auth/check-token", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Token verification failed:", error);
+    return null;
+  }
+}
+
+
+// actions/signup.ts
+export interface SignupPayload {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreed: boolean;
+}
+
+
+export const signupUser = async (payload: SignupPayload) => {
+  try {
+    const response = await axiosInstance.post("/api/auth/signup", payload);
+    return response.data; // Axios parses JSON automatically
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || error.message || "Registration failed";
+    throw new Error(message);
   }
 };
-
