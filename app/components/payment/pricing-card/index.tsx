@@ -15,11 +15,13 @@ interface PricingCardProps {
     buttonText: string;
     isSubscription?: boolean;
     isBestValue?: boolean;
+    onclick: ()=>void;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
     title,
     price,
+    onclick,
     period,
     features,
     buttonText,
@@ -79,16 +81,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
             </ul>
 
             {/* Button */}
-            <Link href={'/payment'}>
                 <button
-                    className={`w-full py-3 rounded-full font-medium transition-colors ${isSubscription
+                  onClick={onclick}
+                    className={`w-full cursor-pointer py-3 rounded-full font-medium transition-colors ${isSubscription
                         ? "bg-white text-indigo-500 hover:bg-gray-100"
                         : " text-buttonBg border hover:bg-gray-300"
                         }`}
                 >
                     {buttonText}
                 </button>
-            </Link>
         </div>
     );
 };

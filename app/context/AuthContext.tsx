@@ -6,6 +6,8 @@ interface User {
   _id: string;
   email: string;
   username: string;
+  paidOneTime:boolean,
+  isSubscribed:boolean
 }
 
 interface AuthContextType {
@@ -15,6 +17,7 @@ interface AuthContextType {
   login: (email: string, token: string) => Promise<boolean>;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
+  refetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,6 +62,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initializeAuth();
   }, []);
 
+  const refetchUser = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedEmail = localStorage.getItem("userEmail");
+  
+    if (!storedToken || !storedEmail) return;
+  
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/auth/user/${storedEmail}`,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
+      );
+  
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error("Error refetching user:", error);
+    }
+  };
+  
+
   const login = async (email: string, token: string): Promise<boolean> => {
     try {
       localStorage.setItem("token", token);
@@ -83,6 +112,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           _id: "temp-id",
           email,
           username: email.split("@")[0],
+          paidOneTime:false,
+          isSubscribed:false
         };
         setUser(newUser);
         return true;
@@ -121,7 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, isLoading, login, logout, checkAuth }}
+      value={{ user, token, isLoading, login,refetchUser, logout, checkAuth }}
     >
       {children}
     </AuthContext.Provider>

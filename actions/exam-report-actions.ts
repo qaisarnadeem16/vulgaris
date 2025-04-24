@@ -13,6 +13,8 @@ interface AnalysisResponse {
 
 const API_URL = "https://vulgaris-121988060190.us-central1.run.app/analyze"; // endpoint for medical report analysis
 
+
+
 export const analyzeExamResults = async (request: FormData): Promise<AnalysisResponse> => {
   try {
     const config = {
@@ -27,7 +29,8 @@ export const analyzeExamResults = async (request: FormData): Promise<AnalysisRes
       throw new Error("Invalid response from analysis service");
     }
 console.log(response.data)
-
+    
+    
     return response.data;
 
   } catch (error) {

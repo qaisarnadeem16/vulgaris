@@ -15,6 +15,8 @@ import { GreenHeart } from "@/app/svg";
 import { BsDownload } from "react-icons/bs";
 import Link from "next/link";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { useAuth } from "@/app/context/AuthContext";
+import { TogglePaidOneTime } from "@/libs/payments";
 
 interface AnalysisResponse {
   success: boolean;
@@ -35,7 +37,7 @@ const Upload = () => {
   const [analysisResult, setAnalysisResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const user = { hasPlan: true }; // Mock user status
+  const {user,refetchUser} = useAuth()
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -65,7 +67,17 @@ const Upload = () => {
       }
 
       const response = await analyzeExamResults(formData);
+      if(user)
+      {
+        await TogglePaidOneTime(user?.email)
+      }
       setAnalysisResult(response);
+      setDiseaseDescription("")
+      setFileName("")
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; 
+      }
+      await refetchUser()
     } catch (err: any) {
       setError(err.message || "Analysis failed.");
     } finally {
@@ -74,7 +86,10 @@ const Upload = () => {
   };
 
   const handleUploadClick = async () => {
-    if (!user?.hasPlan) return router.push("/payment");
+    if (!user?.paidOneTime && !user?.isSubscribed){
+        router.push("/payment");
+        return 
+    }
 
     if (!diseaseDescription.trim()) {
       setError('Please enter a specific question about your report.');
@@ -131,7 +146,13 @@ const Upload = () => {
 
               <div
                 className="flex items-center max-w-md mx-auto rounded-full py-2 border border-[#52469E] px-2 cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => {
+                  if (!user?.paidOneTime && !user?.isSubscribed){
+                    router.push("/payment");
+                    return 
+                }
+                  fileInputRef.current?.click()}
+                }
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
               >
@@ -237,7 +258,10 @@ const Upload = () => {
                   Download Report <BsDownload />
                 </button> */}
                 <button
-                  onClick={() => setAnalysisResult(null)}
+                  onClick={() => {
+                    setAnalysisResult(null)
+                    router.refresh()
+                  }}
                   className="flex items-center gap-2 text-white rounded-md bg-gray-400 shadow-md px-7 py-2 text-lg hover:bg-[#c00023] transition"
                 >
                   Back
