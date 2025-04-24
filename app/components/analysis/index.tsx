@@ -19,7 +19,7 @@ const Analysis = () => {
                 <Image src={purpledots} alt="purpledots" height={20} width={80} />
             </div>
             <div className="absolute left-0 top-7">
-                <Image src={gradientellipse} alt="gradientcircle" height={200} width={200} />
+                <Image src={gradientellipse} alt="gradientcircle" height={200} width={200} priority />
             </div>
             <div className=" flex justify-center pt-20 items-center flex-grow">
                 <Section>

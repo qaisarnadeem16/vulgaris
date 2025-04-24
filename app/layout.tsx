@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alice, Poppins, Poetsen_One } from "next/font/google"; // Import Poetsen One
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
 
 // Alice font setup
 const alice = Alice({
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body
         className={`${alice.variable} ${poppins.variable} ${poetsenOne.variable} antialiased`}
       >
+        <AuthProvider>
         {children}
+        </AuthProvider>
       </body>
     </html>
   );

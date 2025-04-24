@@ -4,11 +4,13 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { X, Menu } from 'lucide-react';
+import { useAuth } from '@/app/context/AuthContext';
 
 const Navbar = () => {
     const pathname = usePathname();
     const [language, setLanguage] = useState("ENG");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user, logout } = useAuth();
 
     const isActive = (href: string) => pathname === href;
 
@@ -47,12 +49,31 @@ const Navbar = () => {
                     {/* {language} */}
                 </button>
 
-                <Link
+                {user ? (
+                    <div className="flex items-center gap-4">
+                        <span className="text-black font-medium">Hi, {user.username}</span>
+                        <button 
+                            onClick={logout}
+                            className="bg-red-500 hover:scale-105 duration-300 transition-all text-white px-6 py-2 rounded-lg"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                ) : (
+                    <Link
+                        href="/login"
+                        className="bg-buttonBg hover:scale-105 duration-300 transition-all text-white px-6 py-2 rounded-lg"
+                    >
+                        Login
+                    </Link>
+                )}
+
+                {/* <Link
                     href="/login"
                     className="bg-buttonBg hover:scale-105 duration-300 transition-all text-white px-6 py-2 rounded-lg"
                 >
                     Login
-                </Link>
+                </Link> */}
             </div>
 
             {/* Mobile Menu Toggle */}
