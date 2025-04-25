@@ -3,7 +3,7 @@
 import { isAxiosError } from "axios";
 import { cookies } from "next/headers";
 import axiosInstance from "@/config/axios";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 
 interface SessionResponse {
   data: any | null; // Adjust type as per your API response structure
@@ -26,7 +26,8 @@ export const getSession = async (
 
     let user;
     try {
-      user = jwtDecode(token);
+      user = token;
+      // user = jwtDecode(token);
     } catch (decodeError) {
       return { data: null, error: "Invalid token" };
     }
