@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import Login from '../components/login'
 
 const LoginPage = () => {
     return (
-        <div>
+        <Suspense >
             <Login />
-        </div>
+        </Suspense>
     )
 }
 
