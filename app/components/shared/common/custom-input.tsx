@@ -73,7 +73,7 @@ const CustomInput = (props: CustomInputProps) => {
             name={name}
             id={name}
             value={value}
-            className="w-full  py-1 px-3  bg-transparent focus:outline-none focus:border-none"
+            className="w-full  py-1 px-3  bg-transparent text-black focus:outline-none focus:border-none"
             onChange={onChange}
             onBlur={onBlur}
           />

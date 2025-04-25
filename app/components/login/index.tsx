@@ -163,7 +163,7 @@ const Login = () => {
 
           {/* Form Section */}
           <form onSubmit={handleLogin} className="max-w-lg mx-auto py-10 px-6">
-            <div className="grid md:grid-cols-2 gap-5">
+            <div className="grid md:grid-cols-1 gap-5">
               <CustomInput
                 label="Email"
                 inputType="text"
@@ -180,6 +180,14 @@ const Login = () => {
                 onChange={(e) => handleInputChange(e, "password")}
                 error={errors.password}
               />
+              <div className="py-5 flex justify-center">
+                <Button
+                  label={isSubmitting ? "Logging in..." : "Login"}
+                  type="submit"
+                  disabled={isSubmitting}
+                  style="shadow-purple-400 shadow-sm !px-10 !py-2 text-lg"
+                />
+              </div>
             </div>
 
             <div className="py-5 text-center text-gray-500">OR</div>
@@ -199,14 +207,7 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="py-5 flex justify-center">
-              <Button
-                label={isSubmitting ? "Logging in..." : "Login"}
-                type="submit"
-                disabled={isSubmitting}
-                style="shadow-purple-400 shadow-sm !px-10 !py-2 text-lg"
-              />
-            </div>
+      
             <div className="text-center py-3">
               Don't have account{" "}
               <Link

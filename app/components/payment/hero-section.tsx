@@ -7,6 +7,7 @@ import SubHeading from '../shared/common/sub-heading'
 import PricingCard from './pricing-card'
 import { BuyOneTime, BuySubscription } from '@/libs/payments'
 import { useAuth } from '@/app/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 const oneTimeFeatures = [
     "One comprehensive AI analysis",
@@ -27,22 +28,24 @@ const subscriptionFeatures = [
 
 const HeroSection = () => {
     const { user } = useAuth();
-   console.log('🍕', user)
-    const handlePayment = async (type:string)=>{
-        if(user)
-        {
-            if(type==="oneTime")
-            {
-                const response = await BuyOneTime(type,user?.email)
-                window.location.href = response?.url;
-            }
-            else{
-                const response = await BuySubscription(type,user?.email)
-               // console.log("re",response)
+//    console.log('🍕', user)
+    const Router=useRouter()
+     //    console.log('🍕', user)
+     const handlePayment = async (type: string) => {
+         if (user) {
+             if (type === "oneTime") {
+                 const response = await BuyOneTime(type, user?.email)
                  window.location.href = response?.url;
-            }
-        }
-    }
+             }
+             else {
+                 const response = await BuySubscription(type, user?.email)
+                 // console.log("re",response)
+                 window.location.href = response?.url;
+             }
+         }else{
+             Router.push("/signup")
+         }
+     }
     
 
 
@@ -50,7 +53,7 @@ const HeroSection = () => {
         <>
             <div className="relative min-h-screen bg-cover bg-center flex flex-col"
                 style={{ backgroundImage: `url(${(payment as StaticImageData).src})` }}>
-                <div className="flex flex-col justify-center pt-[10rem] items-center flex-grow">
+                <div className="flex flex-col justify-center pt-10 items-center flex-grow">
                     <Heading className='font-poppins font-bold'>
                         Secure Payment - Almost Done!
                     </Heading>

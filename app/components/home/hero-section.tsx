@@ -32,13 +32,13 @@ const HeroSection = (props: Props) => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <p className="text-lg font-medium">Checking your status...</p>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="w-full h-screen flex items-center justify-center">
+  //       <p className="text-lg font-medium">Checking your status...</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>

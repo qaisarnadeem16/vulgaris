@@ -176,7 +176,7 @@ const Register: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="max-w-lg mx-auto py-10 px-6">
-            <div className="grid md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 gap-5">
               <CustomInput
                 label="Username"
                 inputType="text"
@@ -238,6 +238,7 @@ const Register: React.FC = () => {
               <div className="text-xs text-error mt-2">{errors.agreed}</div>
             )}
 
+
             <div className="py-5 flex justify-center">
               <Button
                 label={isSubmitting ? "Registering..." : "Register"}
@@ -246,7 +247,6 @@ const Register: React.FC = () => {
                 style="shadow-purple-400 shadow-sm !px-10 !py-2 text-lg"
               />
             </div>
-
             <div className="text-center py-3">
               Already have an account?{" "}
               <Link
