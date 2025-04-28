@@ -66,3 +66,24 @@ export const signupUser = async (payload: SignupPayload) => {
     throw new Error(message);
   }
 };
+
+
+export async function saveReportAction(email: string, simplified_conclusion: string, disclaimer: string, cost: number) {
+  try {
+    // Send a POST request to save the report
+    const response = await axiosInstance.post("/api/auth/save-report", {
+      email,
+      simplified_conclusion,
+      disclaimer,
+      cost,
+    });
+
+    // Return the response data or a success message
+    return { success: response.data?.message || "Report saved successfully" };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return { error: error.response?.data?.message || "Error saving report" };
+    }
+    return { error: "An unexpected error occurred" };
+  }
+}

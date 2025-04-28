@@ -17,6 +17,8 @@ import Link from "next/link";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useAuth } from "@/app/context/AuthContext";
 import { TogglePaidOneTime } from "@/libs/payments";
+import { saveReportAction } from "@/actions/auth-actions/auth-actions";
+import { MdOutlineInfo } from "react-icons/md";
 
 interface AnalysisResponse {
   success: boolean;
@@ -37,7 +39,7 @@ const Upload = () => {
   const [analysisResult, setAnalysisResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const {user,refetchUser} = useAuth()
+  const { user, refetchUser } = useAuth();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -67,17 +69,29 @@ const Upload = () => {
       }
 
       const response = await analyzeExamResults(formData);
-      if(user)
-      {
-        await TogglePaidOneTime(user?.email)
+      if (user) {
+        await TogglePaidOneTime(user?.email);
+
+        const { email, simplified_conclusion, disclaimer, cost } = {
+          email: user.email,
+          simplified_conclusion: response.simplified_conclusion || "",
+          disclaimer: response.disclaimer || "",
+          cost: Number(response.cost) || 0,
+        };
+
+        const saveResult = await saveReportAction(email, simplified_conclusion, disclaimer, cost);
+        if (saveResult.error) {
+          setError(saveResult.error);
+        }
       }
+
       setAnalysisResult(response);
-      setDiseaseDescription("")
-      setFileName("")
+      setDiseaseDescription("");
+      setFileName("");
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; 
+        fileInputRef.current.value = "";
       }
-      await refetchUser()
+      await refetchUser();
     } catch (err: any) {
       setError(err.message || "Analysis failed.");
     } finally {
@@ -86,13 +100,13 @@ const Upload = () => {
   };
 
   const handleUploadClick = async () => {
-    if (!user?.paidOneTime && !user?.isSubscribed){
-        router.push("/payment");
-        return 
+    if (!user?.paidOneTime && !user?.isSubscribed) {
+      router.push("/payment");
+      return;
     }
 
     if (!diseaseDescription.trim()) {
-      setError('Please enter a specific question about your report.');
+      setError("Please enter a specific question about your report.");
       return;
     }
 
@@ -135,24 +149,24 @@ const Upload = () => {
               Upload & Analyze Your Medical Report
             </Heading>
             <SubHeading
-              text="Powered by GPT-4.5 for accurate, instant insights"
+              text="Powered by GPT-4.1 for accurate, instant insights"
               styles="font-poppins"
             />
 
             <div className="p-4 space-y-6">
               <div className="text-center text-gray-700 font-medium">
-                Upload Your Lab Results or Medical Scan
+                Upload Your Lab Results of Medical Report
               </div>
 
               <div
                 className="flex items-center max-w-md mx-auto rounded-full py-2 border border-[#52469E] px-2 cursor-pointer"
                 onClick={() => {
-                  if (!user?.paidOneTime && !user?.isSubscribed){
+                  if (!user?.paidOneTime && !user?.isSubscribed) {
                     router.push("/payment");
-                    return 
-                }
-                  fileInputRef.current?.click()}
-                }
+                    return;
+                  }
+                  fileInputRef.current?.click();
+                }}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
               >
@@ -161,7 +175,7 @@ const Upload = () => {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  accept=".pdf"
                 />
                 <input
                   type="text"
@@ -179,16 +193,28 @@ const Upload = () => {
                 </button>
               </div>
 
-              <div className="max-w-md mx-auto pt-5">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tell me about your disease?
+              <div className="relative group max-w-md mx-auto">
+                <label className="text-sm flex items-center gap-2 font-medium text-gray-700 mb-2">
+                  A Specific Question about your report?
+                  <div className="relative flex items-center">
+                    <MdOutlineInfo size={20} className="cursor-pointer text-gray-500" />
+                    <div className="absolute top-6 left-0 z-10 hidden group-hover:block w-96 text-sm bg-white text-black border border-gray-300 shadow-lg rounded p-3">
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>I have been experiencing headaches. Could this be related to any findings in my exam?</li>
+                        <li>I’m concerned about my heart health. What does my exam say about this?</li>
+                        <li>What steps can I take to improve my health based on these results?</li>
+                        <li>I've noticed some joint pain. Can my exam explain why this is happening?</li>
+                        <li>Is there anything in my exam that suggests I need further tests for diabetes?</li>
+                      </ul>
+                    </div>
+                  </div>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g., Type 2 Diabetes"
                   value={diseaseDescription}
                   onChange={(e) => setDiseaseDescription(e.target.value)}
-                  className="w-full px-4 py-3 rounded-full border border-[#52469E] focus:outline-none"
+                  className={`w-full px-4 py-3 rounded-full border ${diseaseDescription.trim() === "" && error ? "border-red-500" : "border-[#52469E]"} focus:outline-none`}
                 />
               </div>
 
@@ -243,7 +269,7 @@ const Upload = () => {
                     ))}
                 </div>
               </div>
-              <p className="font-medium ">
+              <p className="font-medium">
                 Disclaimer:{" "}
                 <span className="text-[#D80027]">
                   {analysisResult.disclaimer}
@@ -252,15 +278,10 @@ const Upload = () => {
 
               {/* Download Button */}
               <div className="flex justify-center pt-4">
-                {/* <button
-                  className="flex items-center gap-2 text-white rounded-md bg-[#D80027] shadow-md px-7 py-3 text-lg hover:bg-[#c00023] transition"
-                >
-                  Download Report <BsDownload />
-                </button> */}
                 <button
                   onClick={() => {
-                    setAnalysisResult(null)
-                    router.refresh()
+                    setAnalysisResult(null);
+                    router.refresh();
                   }}
                   className="flex items-center gap-2 text-white rounded-md bg-gray-400 shadow-md px-7 py-2 text-lg hover:bg-[#c00023] transition"
                 >

@@ -15,7 +15,7 @@ const API_URL = "https://vulgaris-121988060190.us-central1.run.app/analyze"; // 
 
 
 
-export const analyzeExamResults = async (request: FormData): Promise<AnalysisResponse> => {
+export const analyzeExamResults = async (request: FormData): Promise<any> => {
   try {
     const config = {
       headers: {
