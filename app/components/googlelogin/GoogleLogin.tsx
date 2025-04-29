@@ -20,7 +20,7 @@ export default function GoogleLogin() {
     const clientId =
       "511465103962-nkrpa9jm2qcjmk2brcmd3scc3shfg4qt.apps.googleusercontent.com";
     const redirectUri = encodeURIComponent(
-      "https://medizen-backend-three.vercel.app/api/auth/google/callback"
+      "https://vulgaris.vercel.app/api/auth/google/callback"
     );
     const scope = encodeURIComponent("email profile");
 
