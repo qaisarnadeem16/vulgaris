@@ -86,7 +86,7 @@ export async function verifyGoogleToken(token: string) {
       console.log("Trying fallback verification with fetch API...");
       try {
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+          process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
         const fetchResponse = await fetch(`${apiUrl}/api/auth/check-token`, {
           headers: {
             Authorization: `Bearer ${token}`,

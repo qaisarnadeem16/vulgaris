@@ -264,12 +264,12 @@ const Login = () => {
 
             <div className="flex justify-center py-6 items-center gap-2 md:gap-5">
               <GoogleLogin />
-              <button
+              {/* <button
                 type="button"
                 className="bg-black flex items-center gap-2 text-white px-3 md:px-7 py-2 rounded-lg hover:scale-105 transition-transform"
               >
                 <AppleIcon /> With Apple
-              </button>
+              </button> */}
             </div>
 
             <div className="text-center py-3">
