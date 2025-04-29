@@ -14,7 +14,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GoogleLogin from "../../components/googlelogin/GoogleLogin";
 import { useAuth } from "@/app/context/AuthContext";
-import { loginAction, verifyGoogleToken } from "@/actions/auth-actions/auth-actions";
+import {
+  loginAction,
+  verifyGoogleToken,
+} from "@/actions/auth-actions/auth-actions";
 
 const Login = () => {
   const router = useRouter();
@@ -27,17 +30,74 @@ const Login = () => {
     {}
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [processingGoogleAuth, setProcessingGoogleAuth] = useState(false);
+
   useEffect(() => {
     const token = searchParams.get("token");
     const email = searchParams.get("email");
 
     if (token && email) {
       console.log("Processing Google login");
+      // const handleGoogleLogin = async () => {
+      //   try {
+      //     const verifyResponse = await verifyGoogleToken(token);
+
+      //     if (verifyResponse && verifyResponse.ok) {
+      //       const success = await login(email, token);
+      //       if (success) {
+      //         const newUrl = window.location.pathname;
+      //         window.history.replaceState({}, document.title, newUrl);
+      //         router.push("/upload");
+      //       }
+      //     }
+
+      //   } catch (error) {
+      //     console.error("Google login failed:", error);
+      //   }
+      // };
+
       const handleGoogleLogin = async () => {
         try {
-          const verifyResponse = await verifyGoogleToken(token);
+          console.log("Google login token details:", {
+            tokenLength: token?.length || 0,
+            tokenPrefix: token ? token.substring(0, 20) + "..." : "none",
+            tokenParts: token ? token.split(".").length : 0,
+            email,
+          });
 
-          if (verifyResponse && verifyResponse.ok) {
+          console.log("Sending token for verification...");
+
+          try {
+            if (token && token.split(".").length === 3) {
+              const [header, payload] = token.split(".");
+              const decodedHeader = JSON.parse(atob(header));
+              const decodedPayload = JSON.parse(atob(payload));
+              console.log("Token contents (for debugging):", {
+                header: decodedHeader,
+                payload: {
+                  ...decodedPayload,
+                  id: decodedPayload.id ? "exists" : "missing",
+                  email: decodedPayload.email ? "exists" : "missing",
+                  exp: decodedPayload.exp
+                    ? new Date(decodedPayload.exp * 1000).toISOString()
+                    : "missing",
+                },
+              });
+            }
+          } catch (e) {
+            console.error("Failed to decode token:", e);
+          }
+
+          const verification = await verifyGoogleToken(token);
+
+          console.log("Token verification result:", verification);
+
+          if (!verification?.ok) {
+            console.error("Token verification failed:", verification);
+            throw new Error(verification?.message || "Invalid token");
+          }
+
+          if (verification && verification.ok) {
             const success = await login(email, token);
             if (success) {
               const newUrl = window.location.pathname;
@@ -45,12 +105,12 @@ const Login = () => {
               router.push("/upload");
             }
           }
-
-        } catch (error) {
-          console.error("Google login failed:", error);
+        } catch (error: any) {
+          console.error("Google login failed with error:", error);
+          setProcessingGoogleAuth(false);
+          alert(`Google login failed: ${error.message}. Please try again.`);
         }
       };
-
       handleGoogleLogin();
     }
   }, [searchParams, router, login]);
@@ -96,7 +156,6 @@ const Login = () => {
       setIsSubmitting(false);
     }
   };
-
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -163,6 +222,12 @@ const Login = () => {
 
           {/* Form Section */}
           <form onSubmit={handleLogin} className="max-w-lg mx-auto py-10 px-6">
+            {processingGoogleAuth && (
+              <div className="text-center mb-4 p-3 bg-blue-100 text-blue-800 rounded-md">
+                Processing Google login, please wait...
+              </div>
+            )}
+
             <div className="grid md:grid-cols-1 gap-5">
               <CustomInput
                 label="Email"
@@ -207,7 +272,6 @@ const Login = () => {
               </button>
             </div>
 
-      
             <div className="text-center py-3">
               Don't have account{" "}
               <Link
