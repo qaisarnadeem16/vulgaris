@@ -22,6 +22,7 @@ export const analyzeExamResults = async (request: FormData): Promise<any> => {
         'Content-Type': 'multipart/form-data',
       }
     };
+console.log(request)
 
     const response: AxiosResponse<AnalysisResponse> = await axios.post(API_URL, request, config);
 

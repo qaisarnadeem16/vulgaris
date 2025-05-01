@@ -64,6 +64,7 @@ const Upload = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("model", 'gpt-4.1');
       if (diseaseDescription) {
         formData.append("disease_context", diseaseDescription);
       }
@@ -149,7 +150,7 @@ const Upload = () => {
               Upload & Analyze Your Medical Report
             </Heading>
             <SubHeading
-              text="Powered by GPT-4.1 for accurate, instant insights"
+              text="Powered by our cutting edge AI system for accurate, instant insights"
               styles="font-poppins"
             />
 

@@ -13,6 +13,6 @@ export const StepData = [
       number: 3,
       title: "Get AI-Powered Analysis",
       description:
-        "Our GPT-4.5 powered system analyzes your documents and provides plain-language results",
+        "Our cutting edge AI system anakyze your documents and provides plain-language results",
     },
   ];
