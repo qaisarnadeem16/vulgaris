@@ -158,3 +158,27 @@ export async function saveReportAction(
     return { error: "An unexpected error occurred" };
   }
 }
+
+
+export async function saveReportDataAction(
+  email: string,
+  reportUrl: string,
+  question: string,
+) {
+  try {
+    // Send a POST request to save the report
+    const response = await axiosInstance.post("/api/auth/save-medical-report", {
+      email,
+      reportUrl,
+      question,
+    });
+
+    // Return the response data or a success message
+    return { success: response.data?.message || "Report saved successfully" };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return { error: error.response?.data?.message || "Error saving report" };
+    }
+    return { error: "An unexpected error occurred" };
+  }
+}

@@ -17,9 +17,13 @@ import Link from "next/link";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useAuth } from "@/app/context/AuthContext";
 import { TogglePaidOneTime } from "@/libs/payments";
-import { saveReportAction } from "@/actions/auth-actions/auth-actions";
+import { saveReportAction, saveReportDataAction } from "@/actions/auth-actions/auth-actions";
 import { MdOutlineInfo } from "react-icons/md";
 
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { storage } from "@/config/firebase";
 interface AnalysisResponse {
   success: boolean;
   data: {
@@ -34,28 +38,61 @@ const Upload = () => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
   const [diseaseDescription, setDiseaseDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const { user, refetchUser } = useAuth();
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
+    setFileName(file.name);
+
+    try {
+      setLoading(true);
+      const storageRef = ref(storage, `medical-report-files/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      setFileUrl(downloadURL);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      setFileName(e.dataTransfer.files[0].name);
-      if (fileInputRef.current) {
-        fileInputRef.current.files = e.dataTransfer.files;
-      }
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    setFileName(file.name);
+    // Directly upload the dropped file
+    try {
+      setLoading(true);
+      const storageRef = ref(storage, `medical-report-files/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      setFileUrl(downloadURL);
+    } catch (error) {
+      console.error("Error uploading dropped file:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // To prevent default behavior while dragging
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+
 
   const analyzeMedicalReport = async (file: File) => {
     setIsLoading(true);
@@ -101,22 +138,49 @@ const Upload = () => {
   };
 
   const handleUploadClick = async () => {
-    if (!user?.paidOneTime && !user?.isSubscribed) {
-      router.push("/payment");
-      return;
-    }
+    setError(""); // Clear previous errors
 
     if (!diseaseDescription.trim()) {
       setError("Please enter a specific question about your report.");
       return;
     }
 
-    if (fileInputRef.current?.files?.[0]) {
-      await analyzeMedicalReport(fileInputRef.current.files[0]);
-    } else {
-      setError("Please select a file first");
+    if (!fileUrl) {
+      setError("Please upload a file before submitting.");
+      return;
+    }
+
+    try {
+      if (user) {
+        const saveResult = await saveReportDataAction(
+          user.email,
+          fileUrl,
+          diseaseDescription
+        );
+
+        if (saveResult.error) {
+          setError(saveResult.error);
+          return;
+        }
+      }
+      if (!user?.paidOneTime && !user?.isSubscribed) {
+        router.push("/payment");
+        return;
+      }
+
+      const file = fileInputRef.current?.files?.[0];
+      if (!file) {
+        setError("Please select a file first.");
+        return;
+      }
+
+      await analyzeMedicalReport(file);
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError("Something went wrong. Please try again.");
     }
   };
+
 
   return (
     <div
@@ -162,10 +226,10 @@ const Upload = () => {
               <div
                 className="flex items-center max-w-md mx-auto rounded-full py-2 border border-[#52469E] px-2 cursor-pointer"
                 onClick={() => {
-                  if (!user?.paidOneTime && !user?.isSubscribed) {
-                    router.push("/payment");
-                    return;
-                  }
+                  // if (!user?.paidOneTime && !user?.isSubscribed) {
+                  //   router.push("/payment");
+                  //   return;
+                  // }
                   fileInputRef.current?.click();
                 }}
                 onDragOver={(e) => e.preventDefault()}
@@ -186,11 +250,11 @@ const Upload = () => {
                   className="w-full px-4 py-2 focus:outline-none placeholder-[#979797] bg-transparent cursor-pointer"
                 />
                 <button
-                  onClick={handleUploadClick}
+                  // onClick={handleUploadClick}
                   disabled={isLoading}
                   className="bg-red-600 text-white px-6 py-2 rounded-full ml-2"
                 >
-                  {isLoading ? "Processing..." : "Upload"}
+                  {isLoading && loading ? "Processing..." : "Upload"}
                 </button>
               </div>
 
