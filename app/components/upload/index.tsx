@@ -136,7 +136,7 @@ const Upload = () => {
       setIsLoading(false);
     }
   };
-
+console.log(user)
   const handleUploadClick = async () => {
     setError(""); // Clear previous errors
 
@@ -151,9 +151,9 @@ const Upload = () => {
     }
 
     try {
-      if (user) {
+      // if (user) {
         const saveResult = await saveReportDataAction(
-          user.email,
+          "test@gmail.com",
           fileUrl,
           diseaseDescription
         );
@@ -162,7 +162,14 @@ const Upload = () => {
           setError(saveResult.error);
           return;
         }
+      // }
+      // Redirect to login if user is not authenticated
+      if (!user) {
+        router.push("/login");
+        return;
       }
+
+
       if (!user?.paidOneTime && !user?.isSubscribed) {
         router.push("/payment");
         return;
@@ -276,7 +283,7 @@ const Upload = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g., Type 2 Diabetes"
+                  placeholder="e.g., Type specfic question"
                   value={diseaseDescription}
                   onChange={(e) => setDiseaseDescription(e.target.value)}
                   className={`w-full px-4 py-3 rounded-full border ${diseaseDescription.trim() === "" && error ? "border-red-500" : "border-[#52469E]"} focus:outline-none`}

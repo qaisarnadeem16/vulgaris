@@ -9,6 +9,7 @@ import SubHeading from "../shared/common/sub-heading";
 import Navbar from "../shared/navbar";
 import Button from "../shared/common/custom-btn";
 import { useAuth } from "@/app/context/AuthContext";
+import Link from "next/link";
 
 // Mock auth hook — replace this with your actual auth logic
 // const useAuth = () => {
@@ -25,11 +26,11 @@ const HeroSection = (props: Props) => {
   const { user, isLoading } = useAuth();
 
   const handleUploadClick = () => {
-    if (!user) {
-      router.push("/login");
-    } else {
+    // if (!user) {
+    //   router.push("/login");
+    // } else {
       router.push("/upload");
-    }
+    // }
   };
 
   // if (isLoading) {
@@ -59,9 +60,9 @@ const HeroSection = (props: Props) => {
               styles="max-w-xl py-9 mx-auto font-normal font-poppins text-[19px]"
               text="Our AI cross-references thousands of medical studies to give you a personalized health report—so you can make informed decisions faster."
             />
-            <div className="!flex !justify-center">
-              <Button label="Upload PDF" onClick={handleUploadClick} />
-            </div>
+            <Link href="/upload" className="!flex !justify-center">
+              <Button label="Upload PDF" />
+            </Link>
           </div>
         </Section>
       </div>

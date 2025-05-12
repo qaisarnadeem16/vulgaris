@@ -22,7 +22,8 @@ import {
 const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const { user, refetchUser, login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -147,8 +148,14 @@ const Login = () => {
 
       // Optionally update auth context
       login(response.user.email, response.token);
+  
+      if (!user?.paidOneTime && !user?.isSubscribed) {
+        router.push("/payment");
+        return;
+      }else{
+        router.push("/upload");
 
-      router.push("/upload");
+      }
     } catch (err: any) {
       console.error("Login error:", err);
       alert(err.message || "An error occurred during login.");

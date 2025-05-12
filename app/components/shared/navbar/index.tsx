@@ -26,7 +26,7 @@ const Navbar = () => {
   }, [user, isLoading]);
 
   const isActive = (href: string) => pathname === href;
-  console.log("userrrr", user);
+  // console.log("userrrr", user);
 
   return (
     <nav className="flex items-center justify-between z-10 px-8 py-6 absolute w-full left-1/2 -translate-x-1/2 lg:w-9/12">
