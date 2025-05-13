@@ -34,7 +34,7 @@ interface FormErrors {
 
 const Register: React.FC = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -116,7 +116,14 @@ const Register: React.FC = () => {
       const data = await signupUser(formData);
       console.log("Registration success:", data);
       login(data.user.email, data.token);
-      router.push("/upload");
+
+      if (!user?.paidOneTime && !user?.isSubscribed) {
+        router.push("/payment");
+        return;
+      } else {
+        router.push("/upload");
+
+      }
     } catch (err: any) {
       alert(err.message);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import bitmap from "/public/assets/bitmap.svg";
@@ -19,11 +19,11 @@ import { useAuth } from "@/app/context/AuthContext";
 import { TogglePaidOneTime } from "@/libs/payments";
 import { saveReportAction, saveReportDataAction } from "@/actions/auth-actions/auth-actions";
 import { MdOutlineInfo } from "react-icons/md";
-
 import { addDoc, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 import { storage } from "@/config/firebase";
+import { IoClose } from "react-icons/io5";
+
 interface AnalysisResponse {
   success: boolean;
   data: {
@@ -46,6 +46,46 @@ const Upload = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { user, refetchUser } = useAuth();
+
+  // Load saved data from localStorage when component mounts
+  useEffect(() => {
+    const savedFileName = localStorage.getItem("uploadFileName");
+    const savedFileUrl = localStorage.getItem("uploadFileUrl");
+    const savedDiseaseDescription = localStorage.getItem("uploadDiseaseDescription");
+
+    if (savedFileName) setFileName(savedFileName);
+    if (savedFileUrl) setFileUrl(savedFileUrl);
+    if (savedDiseaseDescription) setDiseaseDescription(savedDiseaseDescription);
+  }, []);
+
+  // Save file and disease description to localStorage
+  const saveToLocalStorage = () => {
+    localStorage.setItem("uploadFileName", fileName);
+    localStorage.setItem("uploadFileUrl", fileUrl);
+    localStorage.setItem("uploadDiseaseDescription", diseaseDescription);
+  };
+
+  // Clear localStorage
+  const clearLocalStorage = () => {
+    localStorage.removeItem("uploadFileName");
+    localStorage.removeItem("uploadFileUrl");
+    localStorage.removeItem("uploadDiseaseDescription");
+  };
+
+  // Clear file-related data
+  const clearFileData = () => {
+    setFileName("");
+    setFileUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    localStorage.removeItem("uploadFileName");
+    localStorage.removeItem("uploadFileUrl");
+    // Optionally clear diseaseDescription
+    // setDiseaseDescription("");
+    // localStorage.removeItem("uploadDiseaseDescription");
+  };
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -59,6 +99,7 @@ const Upload = () => {
       const downloadURL = await getDownloadURL(storageRef);
 
       setFileUrl(downloadURL);
+      saveToLocalStorage(); // Update localStorage
     } catch (error) {
       console.error("Error uploading file:", error);
     } finally {
@@ -72,7 +113,6 @@ const Upload = () => {
     if (!file) return;
 
     setFileName(file.name);
-    // Directly upload the dropped file
     try {
       setLoading(true);
       const storageRef = ref(storage, `medical-report-files/${file.name}`);
@@ -80,6 +120,7 @@ const Upload = () => {
       const downloadURL = await getDownloadURL(storageRef);
 
       setFileUrl(downloadURL);
+      saveToLocalStorage(); // Update localStorage
     } catch (error) {
       console.error("Error uploading dropped file:", error);
     } finally {
@@ -87,12 +128,9 @@ const Upload = () => {
     }
   };
 
-  // To prevent default behavior while dragging
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
-
-
 
   const analyzeMedicalReport = async (file: File) => {
     setIsLoading(true);
@@ -101,7 +139,7 @@ const Upload = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("model", 'gpt-4.1');
+      formData.append("model", "gpt-4.1");
       if (diseaseDescription) {
         formData.append("disease_context", diseaseDescription);
       }
@@ -126,9 +164,11 @@ const Upload = () => {
       setAnalysisResult(response);
       setDiseaseDescription("");
       setFileName("");
+      setFileUrl("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      clearLocalStorage(); // Clear localStorage after successful analysis
       await refetchUser();
     } catch (err: any) {
       setError(err.message || "Analysis failed.");
@@ -136,7 +176,7 @@ const Upload = () => {
       setIsLoading(false);
     }
   };
-console.log(user)
+
   const handleUploadClick = async () => {
     setError(""); // Clear previous errors
 
@@ -151,26 +191,28 @@ console.log(user)
     }
 
     try {
-      // if (user) {
-        const saveResult = await saveReportDataAction(
-          "test@gmail.com",
-          fileUrl,
-          diseaseDescription
-        );
+      // Save report data
+      const saveResult = await saveReportDataAction(
+        user?.email || "test@gmail.com",
+        fileUrl,
+        diseaseDescription
+      );
 
-        if (saveResult.error) {
-          setError(saveResult.error);
-          return;
-        }
-      // }
+      if (saveResult.error) {
+        setError(saveResult.error);
+        return;
+      }
+
       // Redirect to login if user is not authenticated
       if (!user) {
+        saveToLocalStorage(); // Save to localStorage before redirecting
         router.push("/login");
         return;
       }
 
-
+      // Redirect to payment if user hasn't paid or subscribed
       if (!user?.paidOneTime && !user?.isSubscribed) {
+        saveToLocalStorage(); // Save to localStorage before redirecting
         router.push("/payment");
         return;
       }
@@ -188,6 +230,10 @@ console.log(user)
     }
   };
 
+  // Update localStorage when diseaseDescription changes
+  useEffect(() => {
+    saveToLocalStorage();
+  }, [diseaseDescription]);
 
   return (
     <div
@@ -209,7 +255,7 @@ console.log(user)
       <div className="absolute left-28 top-28">
         <Link
           href={"/"}
-          className="cursor-pointer text-black  rounded-full hover:underline hover:text-buttonBg"
+          className="cursor-pointer text-black rounded-full hover:underline hover:text-buttonBg"
         >
           <IoArrowBackSharp size={32} />
         </Link>
@@ -233,13 +279,9 @@ console.log(user)
               <div
                 className="flex items-center max-w-md mx-auto rounded-full py-2 border border-[#52469E] px-2 cursor-pointer"
                 onClick={() => {
-                  // if (!user?.paidOneTime && !user?.isSubscribed) {
-                  //   router.push("/payment");
-                  //   return;
-                  // }
                   fileInputRef.current?.click();
                 }}
-                onDragOver={(e) => e.preventDefault()}
+                onDragOver={handleDragOver}
                 onDrop={handleDrop}
               >
                 <input
@@ -249,21 +291,32 @@ console.log(user)
                   className="hidden"
                   accept=".pdf"
                 />
-                <input
-                  type="text"
-                  value={fileName}
-                  placeholder="Drag & drop or click to browse"
-                  readOnly
-                  className="w-full px-4 py-2 focus:outline-none placeholder-[#979797] bg-transparent cursor-pointer"
-                />
+                <div className="relative flex w-full items-center">
+                  <input
+                    type="text"
+                    value={fileName}
+                    placeholder="Drag & drop or click to browse"
+                    readOnly
+                    className="w-full px-4 py-2 focus:outline-none placeholder-[#979797] bg-transparent cursor-pointer"
+                  />
+                  {fileName && (
+                    <button
+                      onClick={clearFileData}
+                      className="absolute right-2 text-gray-500 hover:text-red-600"
+                      title="Clear file"
+                    >
+                      <IoClose size={20} />
+                    </button>
+                  )}
+                </div>
                 <button
-                  // onClick={handleUploadClick}
-                  disabled={isLoading}
+                  disabled={isLoading || loading}
                   className="bg-red-600 text-white px-6 py-2 rounded-full ml-2"
                 >
-                  {isLoading && loading ? "Processing..." : "Upload"}
+                  {isLoading || loading ? "Processing..." : "Upload"}
                 </button>
               </div>
+              
 
               <div className="relative group max-w-md mx-auto">
                 <label className="text-sm flex items-center gap-2 font-medium text-gray-700 mb-2">
@@ -283,10 +336,11 @@ console.log(user)
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g., Type specfic question"
+                  placeholder="e.g., Type specific question"
                   value={diseaseDescription}
                   onChange={(e) => setDiseaseDescription(e.target.value)}
-                  className={`w-full px-4 py-3 rounded-full border ${diseaseDescription.trim() === "" && error ? "border-red-500" : "border-[#52469E]"} focus:outline-none`}
+                  className={`w-full px-4 py-3 rounded-full border ${diseaseDescription.trim() === "" && error ? "border-red-500" : "border-[#52469E]"
+                    } focus:outline-none`}
                 />
               </div>
 
@@ -307,7 +361,6 @@ console.log(user)
         {analysisResult && (
           <Section>
             <div className="space-y-4 max-w-5xl mx-auto">
-              {/* Header */}
               <div className="space-y-4 text-center">
                 <Heading className="font-poppins font-bold md:text-5xl">
                   AI Analysis Completed!
@@ -318,8 +371,7 @@ console.log(user)
                 />
               </div>
 
-              {/* Result Card */}
-              <div className="p-6  mx-auto font-poppins text-white rounded-xl flex flex-col items-center text-center bg-[#6fA3D8] space-y-4">
+              <div className="p-6 mx-auto font-poppins text-white rounded-xl flex flex-col items-center text-center bg-[#6fA3D8] space-y-4">
                 <div className="text-left text-lg text-white space-y-2">
                   {analysisResult.simplified_conclusion
                     .split("\n")
@@ -348,7 +400,6 @@ console.log(user)
                 </span>
               </p>
 
-              {/* Download Button */}
               <div className="flex justify-center pt-4">
                 <button
                   onClick={() => {

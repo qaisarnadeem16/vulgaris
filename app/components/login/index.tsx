@@ -103,7 +103,14 @@ const Login = () => {
             if (success) {
               const newUrl = window.location.pathname;
               window.history.replaceState({}, document.title, newUrl);
-              router.push("/upload");
+
+              if (!user?.paidOneTime && !user?.isSubscribed) {
+                router.push("/payment");
+                return;
+              } else {
+                router.push("/upload");
+
+              }
             }
           }
         } catch (error: any) {
