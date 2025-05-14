@@ -14,15 +14,19 @@ import { getDatabase } from "firebase/database";
 //     appId: "1:130397483356:web:f8dc7c163c18443b621199",
 //     measurementId: "G-1WRF48L1JW"
 // };
+// Validate environment variables
+
+
 const firebaseConfig = {
-    apiKey: "AIzaSyDE2MDMU_4OcnkZOCj455LdWMQvZALQX2Y",
-    authDomain: "vulgaris-d0e4d.firebaseapp.com",
-    projectId: "vulgaris-d0e4d",
-    storageBucket: "vulgaris-d0e4d.firebasestorage.app",
-    messagingSenderId: "946533116590",
-    appId: "1:946533116590:web:56aa595ac913fc484e5b3f",
-    measurementId: "G-5FY44YPQYL"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
   
 const app = initializeApp(firebaseConfig);
 
