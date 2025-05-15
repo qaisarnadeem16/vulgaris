@@ -170,31 +170,19 @@ const Upload = () => {
 
     try {
       // Upload file to Firebase
-      const storageRef = ref(storage, `medical-report-files/${file.name}`);
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-
-      // Save report data
-      const saveResult = await saveReportDataAction(
-        user?.email || "test@gmail.com",
-        downloadURL,
-        diseaseDescription
-      );
-      if (saveResult.error) {
-        throw new Error(saveResult.error);
-      }
+    
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("model", "gpt-4o");
+      formData.append("model", "gpt-4.1");
       if (diseaseDescription) {
-        formData.append("disease_context", diseaseDescription);
+        formData.append("user_context", diseaseDescription);
       }
 
       const response = await analyzeExamResults(formData);
-      // if (!response.success) {
-      //   throw new Error(response.error || "Analysis failed.");
-      // }
+      if (!response.success) {
+        throw new Error(response.error || "Analysis failed.");
+      }
 
       if (user) {
         await TogglePaidOneTime(user.email);
@@ -235,7 +223,19 @@ const Upload = () => {
       setError("Please upload a file before submitting.");
       return;
     }
+  const storageRef = ref(storage, `medical-report-files/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
 
+      // Save report data
+      const saveResult = await saveReportDataAction(
+        user?.email || "test@gmail.com",
+        downloadURL,
+        diseaseDescription
+      );
+      if (saveResult.error) {
+        throw new Error(saveResult.error);
+      }
     try {
       if (!user) {
         await saveToLocalStorage();
