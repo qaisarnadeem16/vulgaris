@@ -186,7 +186,7 @@ const Upload = () => {
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("model", "gpt-4.1");
+      formData.append("model", "gpt-4o");
       if (diseaseDescription) {
         formData.append("disease_context", diseaseDescription);
       }
