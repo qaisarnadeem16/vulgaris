@@ -180,9 +180,9 @@ const Upload = () => {
       }
 
       const response = await analyzeExamResults(formData);
-      if (!response.success) {
-        throw new Error(response.error || "Analysis failed.");
-      }
+      // if (!response.success) {
+      //   throw new Error(response.error || "Analysis failed.");
+      // }
 
       if (user) {
         await TogglePaidOneTime(user.email);
