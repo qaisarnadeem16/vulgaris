@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 const ChoosePlan = () => {
     const oneTimeFeatures = [
         "One comprehensive AI analysis",
-        "GPT-4.5-powered insights",
+        "AI powered insights",
         "Downloadable PDF summary",
         "No Subscription Required",
         "Discount Code Support",

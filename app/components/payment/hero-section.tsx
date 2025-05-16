@@ -13,7 +13,7 @@ import Button from '../shared/common/custom-btn';
 
 const oneTimeFeatures = [
     "One comprehensive AI analysis",
-    "GPT-4.5-powered insights",
+    "Ai powered insights",
     "Downloadable PDF summary",
     "No Subscription Required",
     "Discount Code Support",
